@@ -22,16 +22,23 @@ WriteFile::~WriteFile() {
 void WriteFile::writeWavFileHeader() {
     logI("writeWavFileHeader()");
     if (fp == NULL) {
-        remove("mnt/sdcard/record.wav");
-        fopen("mnt/sdcard/record.wav", "ab+");
+//        remove("mnt/sdcard/record.wav");
+//        fopen("mnt/sdcard/record.wav", "ab+");
+//        remove("/storage/sdcard0/test.wav");
+//        fp = fopen("/storage/sdcard0/test.wav", "ab+");
+        remove("storage/emulated/legacy/test.wav");
+        fp = fopen("storage/emulated/legacy/test.wav", "ab+");
+        if (fp == NULL) {
+            logI("fopen failed!");
+        }
     }
 
-    int totalDataLen = 0;
+    int totalDataLen = 409600+36;
     int channels = this->channel;
     int longSampleRate = this->sample_rate;
     int byteRate = 0;
     int RECORDER_BPP = this->sample_bit;
-    int totalAudioLen = 0;
+    int totalAudioLen = 409600;
     char *header = new char[44];
 
     header[0] = 'R';  // RIFF/WAVE header
@@ -78,11 +85,11 @@ void WriteFile::writeWavFileHeader() {
     header[41] = (char) ((totalAudioLen >> 8) & 0xff);
     header[42] = (char) ((totalAudioLen >> 16) & 0xff);
     header[43] = (char) ((totalAudioLen >> 24) & 0xff);
-    fwrite(header, 44, 1, fp);
+    fwrite(header, 1, 44, fp);
     delete header;
     header = NULL;
 }
 void WriteFile::writeDate(uint8_t *data, int len) {
     logI("writeDate() len:%d", len);
-    fwrite(data, len, 1, fp);
+    fwrite(data, 1, len, fp);
 }
